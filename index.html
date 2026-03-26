@@ -65,6 +65,8 @@ let usuario=null;
 const dados=[];
 
 async function login(){
+  console.log("tentando login...");
+
   const res = await fetch('http://SEU_IP:3000/login',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
