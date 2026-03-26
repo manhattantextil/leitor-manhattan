@@ -59,7 +59,9 @@ button{background:#007BFF;color:#fff;border:none}
 </div>
 
 <script>
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+}
 
 let usuario=null;
 const dados=[];
@@ -67,7 +69,7 @@ const dados=[];
 async function login(){
   console.log("tentando login...");
 
-  const res = await fetch('http://192.168.5.48:3000/login',{
+  const res = await fetch('http://localhost:3000/login',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -97,40 +99,43 @@ mostrar();
 function mostrar(){
 login.style.display=usuario?'none':'block';
 app.style.display=usuario?'block':'none';
-if(usuario) userInfo.innerText='Usuário: '+usuario;
+
+if(usuario) 
+  userInfo.innerText='Usuário: '+usuario;
 }
 
 async function validar(codManual=null){
 const cod=codManual||codigo.value;
-if(!cod||!numero.value) return;
+if(!cod||!numero.value) 
+  return;
 
 try{
-const res=await fetch('https://192.168.5.48:3000/validar',{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-tipo:tipo.value,
-numero:numero.value,
-codigoBarras:cod,
-usuario
-})});
+  const res=await fetch('https://localhost:3000/validar',{
+  method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+  tipo:tipo.value,
+  numero:numero.value,
+  codigoBarras:cod,
+  usuario
+  })});
 
-const r=await res.json();
-add(cod,r.valido?'OK':'ERRO');
+  const r=await res.json();
+  add(cod,r.valido?'OK':'ERRO');
 }catch{
-add(cod,'ERRO');
+  add(cod,'ERRO');
 }
 
 codigo.value='';
 }
 
 function add(codigo,status){
-const agora=new Date();
-dados.push({
-data:agora.toISOString().split('T')[0],
-hora:agora.toLocaleTimeString(),
-usuario,codigo,status,numero:numero.value
-});
-filtrar();
+  const agora=new Date();
+  dados.push({
+    data:agora.toISOString().split('T')[0],
+    hora:agora.toLocaleTimeString(),
+    usuario,codigo,status,numero:numero.value
+  });
+  filtrar();
 }
 
 function filtrar(){
@@ -145,13 +150,13 @@ render(lista);
 }
 
 function render(lista){
-hist.innerHTML='';
-let ok=0,er=0;
-lista.slice().reverse().forEach(r=>{
-if(r.status==='OK') ok++; else er++;
-const d=document.createElement('div');
-d.innerText=`${r.data} ${r.hora} - ${r.usuario} - ${r.numero} - ${r.codigo} - ${r.status}`;
-hist.appendChild(d);
+  hist.innerHTML='';
+  let ok=0,er=0;
+  lista.slice().reverse().forEach(r=>{
+  if(r.status==='OK') ok++; else er++;
+  const d=document.createElement('div');
+  d.innerText=`${r.data} ${r.hora} - ${r.usuario} - ${r.numero} - ${r.codigo} - ${r.status}`;
+  hist.appendChild(d);
 });
 
 totais.innerText=`OK:${ok} ERRO:${er} TOTAL:${lista.length}`;
@@ -165,11 +170,11 @@ XLSX.writeFile(wb,'relatorio.xlsx');
 }
 
 function camera(){
-const qr=new Html5Qrcode('hist');
-qr.start({facingMode:'environment'},{fps:10},txt=>{
-qr.stop();
-validar(txt);
-});
+  const qr=new Html5Qrcode('hist');
+  qr.start({facingMode:'environment'},{fps:10},txt=>{
+  qr.stop();
+  validar(txt);
+  });
 }
 
 ['di','df','status','fCod','fNum'].forEach(id=>{
