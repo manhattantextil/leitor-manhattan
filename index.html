@@ -97,11 +97,19 @@ mostrar();
 }
 
 function mostrar(){
-login.style.display=usuario?'none':'block';
-app.style.display=usuario?'block':'none';
+  const loginDiv = document.getElementById('login');
+  const appDiv = document.getElementById('app');
 
-if(usuario) 
-  userInfo.innerText='Usuário: '+usuario;
+  if (!loginDiv || !appDiv) {
+    console.error("Elemento não encontrado");
+    return;
+  }
+
+  loginDiv.style.display=usuario?'none':'block';
+  appDiv.style.display=usuario?'block':'none';
+
+  if(usuario) 
+    userInfo.innerText='Usuário: '+usuario;
 }
 
 async function validar(codManual=null){
