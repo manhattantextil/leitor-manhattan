@@ -69,7 +69,7 @@ const dados=[];
 async function login(){
   console.log("tentando login...");
 
-  const res = await fetch('http://192.168.5.48:3000/login',{
+  const res = await fetch('https://manhattan-backend-y7ul.onrender.com/login',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -110,7 +110,7 @@ if(!cod||!numero.value)
   return;
 
 try{
-  const res=await fetch('http://192.168.5.48:3000/validar',{
+  const res=await fetch('https://manhattan-backend-y7ul.onrender.com/validar',{
   method:'POST',headers:{'Content-Type':'application/json'},
   body:JSON.stringify({
   tipo:tipo.value,
