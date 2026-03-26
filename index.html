@@ -87,7 +87,7 @@ const cod=codManual||codigo.value;
 if(!cod||!numero.value) return;
 
 try{
-const res=await fetch('https://SEU_WEBSERVICE_AQUI/validar',{
+const res=await fetch('https://192.168.5.48:3000/validar',{
 method:'POST',headers:{'Content-Type':'application/json'},
 body:JSON.stringify({
 tipo:tipo.value,
