@@ -37,6 +37,7 @@ button{background:#007BFF;color:#fff;border:none}
 
 <input id="numero" placeholder="Pedido / OC">
 <input id="codigo" placeholder="Código">
+<div id="mensagem" style="margin-top:10px;font-weight:bold;"></div>
 
 <button onclick="validar()">Validar</button>
 <button onclick="camera()">Câmera</button>
@@ -57,6 +58,14 @@ button{background:#007BFF;color:#fff;border:none}
 <div class="totais" id="totais"></div>
 <div class="history" id="hist"></div>
 </div> -->
+
+<audio id="somErro">
+  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
+</audio>
+
+<audio id="somOk">
+  <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
+</audio>
 
 <script>
 if('serviceWorker' in navigator){
@@ -112,29 +121,44 @@ function mostrar(){
     userInfo.innerText='Usuário: '+usuario;
 }
 
-async function validar(codManual=null){
-const cod=codManual||codigo.value;
-if(!cod||!numero.value) 
-  return;
+async function validarCodigo(){
+  const codigo = codigoInput.value;
 
-try{
+// try{
   const res=await fetch('https://manhattan-backend-y7ul.onrender.com/validar',{
-  method:'POST',headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({
-  tipo:tipo.value,
-  numero:numero.value,
-  codigoBarras:cod,
-  usuario
-  })});
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      tipo,
+      numero: numeroInput.value,
+      codigoBarras: codigo,
+      usuario
+    })
+  });
 
-  const r=await res.json();
-  add(cod,r.valido?'OK':'ERRO');
-}catch{
-  add(cod,'ERRO');
-}
+  const r = await res.json();
 
-codigo.value='';
+  const msg = document.getElementById('mensagem');
+  const somErro = document.getElementById('somErro');
+  const somOk = document.getElementById('somOk');
+
+  if(r.valido){
+    msg.innerText = "✔ Código válido";
+    msg.style.color = "green";
+    somOk.play();
+  } else {
+    msg.innerText = "❌ " + r.erro;
+    msg.style.color = "red";
+    somErro.play();
+  }
+
+  // 🔥 LIMPAR CAMPO
+  codigoInput.value = "";
+
+  // 🔥 FOCO AUTOMÁTICO
+  codigoInput.focus();
 }
+// }
 
 // function add(codigo,status){
 //   const agora=new Date();
@@ -192,6 +216,12 @@ document.addEventListener('input',e=>{if(e.target.id===id)filtrar();});
 window.onload=()=>{
 usuario=localStorage.getItem('u');
 mostrar();
+
+codigoInput.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    validarCodigo();
+  }
+});
 }
 </script>
 
