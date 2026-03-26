@@ -40,10 +40,10 @@ button{background:#007BFF;color:#fff;border:none}
 
 <button onclick="validar()">Validar</button>
 <button onclick="camera()">Câmera</button>
-<button onclick="exportar()">Excel</button>
+<!-- <button onclick="exportar()">Excel</button> -->
 <button onclick="logout()">Sair</button>
 
-<h3>Filtros</h3>
+<!-- <h3>Filtros</h3>
 <input type="date" id="di">
 <input type="date" id="df">
 <select id="status">
@@ -56,7 +56,7 @@ button{background:#007BFF;color:#fff;border:none}
 
 <div class="totais" id="totais"></div>
 <div class="history" id="hist"></div>
-</div>
+</div> -->
 
 <script>
 if('serviceWorker' in navigator){
@@ -136,46 +136,46 @@ try{
 codigo.value='';
 }
 
-function add(codigo,status){
-  const agora=new Date();
-  dados.push({
-    data:agora.toISOString().split('T')[0],
-    hora:agora.toLocaleTimeString(),
-    usuario,codigo,status,numero:numero.value
-  });
-  filtrar();
-}
+// function add(codigo,status){
+//   const agora=new Date();
+//   dados.push({
+//     data:agora.toISOString().split('T')[0],
+//     hora:agora.toLocaleTimeString(),
+//     usuario,codigo,status,numero:numero.value
+//   });
+//   filtrar();
+// }
 
-function filtrar(){
-const lista=dados.filter(r=>{
-return (!di.value||r.data>=di.value)
-&&(!df.value||r.data<=df.value)
-&&(!status.value||r.status===status.value)
-&&(!fCod.value||r.codigo.includes(fCod.value))
-&&(!fNum.value||r.numero.includes(fNum.value));
-});
-render(lista);
-}
+// function filtrar(){
+// const lista=dados.filter(r=>{
+// return (!di.value||r.data>=di.value)
+// &&(!df.value||r.data<=df.value)
+// &&(!status.value||r.status===status.value)
+// &&(!fCod.value||r.codigo.includes(fCod.value))
+// &&(!fNum.value||r.numero.includes(fNum.value));
+// });
+// render(lista);
+// }
 
-function render(lista){
-  hist.innerHTML='';
-  let ok=0,er=0;
-  lista.slice().reverse().forEach(r=>{
-  if(r.status==='OK') ok++; else er++;
-  const d=document.createElement('div');
-  d.innerText=`${r.data} ${r.hora} - ${r.usuario} - ${r.numero} - ${r.codigo} - ${r.status}`;
-  hist.appendChild(d);
-});
+// function render(lista){
+//   hist.innerHTML='';
+//   let ok=0,er=0;
+//   lista.slice().reverse().forEach(r=>{
+//   if(r.status==='OK') ok++; else er++;
+//   const d=document.createElement('div');
+//   d.innerText=`${r.data} ${r.hora} - ${r.usuario} - ${r.numero} - ${r.codigo} - ${r.status}`;
+//   hist.appendChild(d);
+// });
 
-totais.innerText=`OK:${ok} ERRO:${er} TOTAL:${lista.length}`;
-}
+// totais.innerText=`OK:${ok} ERRO:${er} TOTAL:${lista.length}`;
+// }
 
-function exportar(){
-const ws=XLSX.utils.json_to_sheet(dados);
-const wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,'Relatorio');
-XLSX.writeFile(wb,'relatorio.xlsx');
-}
+// function exportar(){
+// const ws=XLSX.utils.json_to_sheet(dados);
+// const wb=XLSX.utils.book_new();
+// XLSX.utils.book_append_sheet(wb,ws,'Relatorio');
+// XLSX.writeFile(wb,'relatorio.xlsx');
+// }
 
 function camera(){
   const qr=new Html5Qrcode('hist');
