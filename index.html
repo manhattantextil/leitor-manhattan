@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#007BFF">
+<link rel="manifest" href="manifest.json">
+<title>Leitor Manhattan</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+body{font-family:Arial;margin:0;background:#f4f4f4}
+.container{max-width:500px;margin:auto;padding:15px;background:#fff}
+input,select,button{width:100%;padding:10px;margin-top:5px}
+button{background:#007BFF;color:#fff;border:none}
+.history{max-height:150px;overflow:auto;margin-top:10px}
+.history div{border-bottom:1px solid #ddd;padding:4px}
+.totais{font-weight:bold;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="container" id="login">
+<h2>Login</h2>
+<input id="user" placeholder="Usuário">
+<input id="pass" type="password" placeholder="Senha">
+<button onclick="login()">Entrar</button>
+</div>
+
+<div class="container" id="app" style="display:none">
+<h2 id="userInfo"></h2>
+
+<select id="tipo">
+<option value="entrada">Entrada</option>
+<option value="saida">Saída</option>
+</select>
+
+<input id="numero" placeholder="Pedido / OC">
+<input id="codigo" placeholder="Código">
+
+<button onclick="validar()">Validar</button>
+<button onclick="camera()">Câmera</button>
+<button onclick="exportar()">Excel</button>
+<button onclick="logout()">Sair</button>
+
+<h3>Filtros</h3>
+<input type="date" id="di">
+<input type="date" id="df">
+<select id="status">
+<option value="">Todos</option>
+<option value="OK">OK</option>
+<option value="ERRO">ERRO</option>
+</select>
+<input id="fCod" placeholder="Código">
+<input id="fNum" placeholder="Pedido/OC">
+
+<div class="totais" id="totais"></div>
+<div class="history" id="hist"></div>
+</div>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
+
+let usuario=null;
+const dados=[];
+
+function login(){
+usuario=user.value;
+localStorage.setItem('u',usuario);
+mostrar();
+}
+
+function logout(){
+usuario=null;
+localStorage.removeItem('u');
+mostrar();
+}
+
+function mostrar(){
+login.style.display=usuario?'none':'block';
+app.style.display=usuario?'block':'none';
+if(usuario) userInfo.innerText='Usuário: '+usuario;
+}
+
+async function validar(codManual=null){
+const cod=codManual||codigo.value;
+if(!cod||!numero.value) return;
+
+try{
+const res=await fetch('https://SEU_WEBSERVICE_AQUI/validar',{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+tipo:tipo.value,
+numero:numero.value,
+codigoBarras:cod,
+usuario
+})});
+
+const r=await res.json();
+add(cod,r.valido?'OK':'ERRO');
+}catch{
+add(cod,'ERRO');
+}
+
+codigo.value='';
+}
+
+function add(codigo,status){
+const agora=new Date();
+dados.push({
+data:agora.toISOString().split('T')[0],
+hora:agora.toLocaleTimeString(),
+usuario,codigo,status,numero:numero.value
+});
+filtrar();
+}
+
+function filtrar(){
+const lista=dados.filter(r=>{
+return (!di.value||r.data>=di.value)
+&&(!df.value||r.data<=df.value)
+&&(!status.value||r.status===status.value)
+&&(!fCod.value||r.codigo.includes(fCod.value))
+&&(!fNum.value||r.numero.includes(fNum.value));
+});
+render(lista);
+}
+
+function render(lista){
+hist.innerHTML='';
+let ok=0,er=0;
+lista.slice().reverse().forEach(r=>{
+if(r.status==='OK') ok++; else er++;
+const d=document.createElement('div');
+d.innerText=`${r.data} ${r.hora} - ${r.usuario} - ${r.numero} - ${r.codigo} - ${r.status}`;
+hist.appendChild(d);
+});
+
+totais.innerText=`OK:${ok} ERRO:${er} TOTAL:${lista.length}`;
+}
+
+function exportar(){
+const ws=XLSX.utils.json_to_sheet(dados);
+const wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,'Relatorio');
+XLSX.writeFile(wb,'relatorio.xlsx');
+}
+
+function camera(){
+const qr=new Html5Qrcode('hist');
+qr.start({facingMode:'environment'},{fps:10},txt=>{
+qr.stop();
+validar(txt);
+});
+}
+
+['di','df','status','fCod','fNum'].forEach(id=>{
+document.addEventListener('input',e=>{if(e.target.id===id)filtrar();});
+});
+
+window.onload=()=>{
+usuario=localStorage.getItem('u');
+mostrar();
+}
+</script>
+
+</body>
+</html>
