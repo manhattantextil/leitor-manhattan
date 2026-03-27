@@ -129,10 +129,10 @@ async function validarCodigo(){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
-      tipo,
+      tipo: tipo.value,
       numero: numeroInput.value,
       codigoBarras: codigo,
-      usuario
+      usuario: user.value
     })
   });
 
