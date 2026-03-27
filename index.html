@@ -157,6 +157,7 @@ async function validarCodigo(){
 
   // 🔥 FOCO AUTOMÁTICO
   codigoInput.focus();
+
 }
 // }
 
@@ -210,19 +211,20 @@ function camera(){
 }
 
 ['di','df','status','fCod','fNum'].forEach(id=>{
-document.addEventListener('input',e=>{if(e.target.id===id)filtrar();});
+  document.addEventListener('input',e=>{if(e.target.id===id)filtrar();});
 });
 
 window.onload=()=>{
-usuario=localStorage.getItem('u');
-mostrar();
+  usuario=localStorage.getItem('u');
+  mostrar();
+}
 
 codigoInput.addEventListener("keypress", function(e) {
   if (e.key === "Enter") {
     validarCodigo();
   }
 });
-}
+
 </script>
 
 </body>
