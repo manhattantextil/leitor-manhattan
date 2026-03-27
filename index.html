@@ -64,7 +64,7 @@ button{background:#007BFF;color:#fff;border:none}
 </audio>
 
 <audio id="somErro">
-  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
 </audio>
 
 <script>
@@ -145,11 +145,20 @@ async function validarCodigo(){
   if(r.valido){
     msg.innerText = "✔ Código válido";
     msg.style.color = "green";
+
+    somOk.currentTime = 0;
     somOk.play();
+
   } else {
     msg.innerText = "❌ " + r.erro;
     msg.style.color = "red";
+
+    somErro.currentTime = 0;
     somErro.play();
+
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
+}
   }
 
   // 🔥 LIMPAR CAMPO
