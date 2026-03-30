@@ -161,6 +161,7 @@ mostrar();
 }
 
 function mostrar(){
+  console.log("logou...");
   const loginDiv = document.getElementById('login');
   const appDiv = document.getElementById('app');
 
@@ -173,7 +174,7 @@ function mostrar(){
   appDiv.style.display=usuario?'block':'none';
 
   if(usuario) 
-    userInfo.innerText='Bem vindo, '+usuario;
+    userInfo.innerText='bem vindo, '+usuario;
 }
 
 async function validarCodigo(){
