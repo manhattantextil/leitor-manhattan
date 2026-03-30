@@ -30,10 +30,17 @@ button{background:#007BFF;color:#fff;border:none}
 <div class="container" id="app" style="display:none">
 <h2 id="userInfo"></h2>
 
-<select id="tipo">
-<option value="entrada">Entrada</option>
-<option value="saida">Saída</option>
-</select>
+<div style="margin-top:10px;">
+  <label>
+    <input type="radio" name="tipo" value="saida" checked>
+    Saída
+  </label>
+
+  <label style="margin-left:15px;">
+    <input type="radio" name="tipo" value="entrada">
+    Entrada
+  </label>
+</div>
 
 <input id="numeroInput" placeholder="Pedido / OC">
 <input id="codigoInput" placeholder="Código">
@@ -68,6 +75,9 @@ button{background:#007BFF;color:#fff;border:none}
 </audio>
 
 <script>
+
+const tipoSelecionado = document.querySelector('input[name="tipo"]:checked').value;
+
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
 }
@@ -129,7 +139,7 @@ async function validarCodigo(){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
-      tipo: tipo.value,
+      tipo: tipoSelecionado,
       numero: numeroInput.value,
       codigoBarras: codigo,
       usuario: user.value
