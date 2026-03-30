@@ -107,7 +107,7 @@ button:active{
 </div>
 
 <input id="numeroInput" placeholder="Pedido / OC" inputmode="numeric" pattern="[0-9]*">
-<input id="codigoInput" placeholder="Código de Barras" inputmode="numeric" pattern="[0-9]*" style="font-size:18px; font-weight:bold;">
+<input id="codigoInput" placeholder="Código de Barras" inputmode="numeric" maxlength="15" pattern="[0-9]*" style="font-size:18px; font-weight:bold;">
 <div id="mensagem" style="margin-top:10px;font-weight:bold;"></div>
 <div id="ultimoCodigo" style="margin-top:10px; font-size:14px; color:#aaa;">
   Última etiqueta lida: 
@@ -196,6 +196,20 @@ function mostrar(){
 
 async function validarCodigo(){
   const codigo = codigoInput.value;
+  const msg = document.getElementById('mensagem');
+
+  // valida tamanho
+  if(codigo.length !== 15){
+    msg.innerText = "❌ Código deve ter 15 dígitos";
+    msg.style.color = "red";
+
+    const somErro = document.getElementById('somErro');
+    somErro.currentTime = 0;
+    somErro.play();
+
+    codigoInput.focus();
+    return;
+  }
 
 // try{
   const res=await fetch('https://manhattan-backend-y7ul.onrender.com/validar',{
@@ -214,7 +228,7 @@ async function validarCodigo(){
 
   const r = await res.json();
 
-  const msg = document.getElementById('mensagem');
+  // const msg = document.getElementById('mensagem');
   const somErro = document.getElementById('somErro');
   const somOk = document.getElementById('somOk');
 
