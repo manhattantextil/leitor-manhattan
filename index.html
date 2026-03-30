@@ -109,6 +109,9 @@ button:active{
 <input id="numeroInput" placeholder="Pedido / OC">
 <input id="codigoInput" placeholder="Código de Barras" style="font-size:18px; font-weight:bold;">
 <div id="mensagem" style="margin-top:10px;font-weight:bold;"></div>
+<div id="ultimoCodigo" style="margin-top:10px; font-size:14px; color:#aaa;">
+  Última etiqueta lida: 
+</div>
 
 <button onclick="validarCodigo()">✅ Validar</button>
 <button onclick="camera()">📷 Câmera</button>
@@ -205,6 +208,9 @@ async function validarCodigo(){
       usuario: user.value
     })
   });
+
+  const ultimo = document.getElementById('ultimoCodigo');
+  ultimo.innerText = "Último código: " + codigo;
 
   const r = await res.json();
 
