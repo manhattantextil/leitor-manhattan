@@ -127,161 +127,158 @@ button:active{
 
 <script>
 
-let tipoSelecionado = "saida";
+  let tipoSelecionado = "saida";
 
-document.querySelectorAll('.tipoBtn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    
-    document.querySelectorAll('.tipoBtn').forEach(b => b.classList.remove('ativo'));
-    
-    btn.classList.add('ativo');
-    
-    tipoSelecionado = btn.dataset.value;
-  });
-});
-
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js');
-}
-
-let usuario=null;
-const dados=[];
-
-async function login(){
-  console.log("tentando logar...");
-
-  const res = await fetch('https://manhattan-backend-y7ul.onrender.com/login',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      user: user.value,
-      pass: pass.value
-    })
+  document.querySelectorAll('.tipoBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      
+      document.querySelectorAll('.tipoBtn').forEach(b => b.classList.remove('ativo'));
+      
+      btn.classList.add('ativo');
+      
+      tipoSelecionado = btn.dataset.value;
+    });
   });
 
-  const r = await res.json();
-
-  if(!r.ok){
-    alert(r.erro);
-    return;
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js');
   }
 
-  usuario = r.usuario;
-  localStorage.setItem('u',usuario);
-  mostrar();
-}
+  let usuario=null;
+  const dados=[];
 
-function logout(){
-usuario=null;
-localStorage.removeItem('u');
-mostrar();
-}
+  async function login(){
+    console.log("tentando logar...");
 
-function mostrar(){
-  console.log("logou...");
-  const loginDiv = document.getElementById('login');
-  const appDiv = document.getElementById('app');
+    const res = await fetch('https://manhattan-backend-y7ul.onrender.com/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        user: user.value,
+        pass: pass.value
+      })
+    });
 
-  if (!loginDiv || !appDiv) {
-    console.error("Elemento não encontrado");
-    return;
+    const r = await res.json();
+
+    if(!r.ok){
+      alert(r.erro);
+      return;
+    }
+
+    usuario = r.usuario;
+    localStorage.setItem('u',usuario);
+    mostrar();
   }
 
-  loginDiv.style.display=usuario?'none':'block';
-  appDiv.style.display=usuario?'block':'none';
+  function logout(){
+    usuario=null;
+    localStorage.removeItem('u');
+    mostrar();
+  }
 
-  if(usuario) 
-    userInfo.innerText='bem vindo, '+usuario;
-}
+  function mostrar(){
+    
+    const loginDiv = document.getElementById('login');
+    const appDiv = document.getElementById('app');
 
-async function validarCodigo(){
-  const codigo = codigoInput.value;
-  const msg = document.getElementById('mensagem');
+    if (!loginDiv || !appDiv) {
+      console.error("Elemento não encontrado");
+      return;
+    }
 
-  // valida tamanho
-  if(codigo.length !== 15){
-    msg.innerText = "❌ Código deve ter 15 dígitos";
-    msg.style.color = "red";
+    loginDiv.style.display=usuario?'none':'block';
+    appDiv.style.display=usuario?'block':'none';
+
+    if(usuario) 
+      userInfo.innerText='bem vindo, '+usuario;
+  }
+
+  async function validarCodigo(){
+    const codigo = codigoInput.value;
+    const msg = document.getElementById('mensagem');
+
+    // valida tamanho
+    if(codigo.length !== 15){
+      msg.innerText = "❌ Código deve ter 15 dígitos";
+      msg.style.color = "red";
+
+      const somErro = document.getElementById('somErro');
+      somErro.currentTime = 0;
+      somErro.play();
+
+      codigoInput.focus();
+      return;
+    }
+
+    const res=await fetch('https://manhattan-backend-y7ul.onrender.com/validar',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        tipo: tipoSelecionado,
+        numero: numeroInput.value,
+        codigoBarras: codigo,
+        usuario: user.value
+      })
+    });
+
+    const ultimo = document.getElementById('ultimoCodigo');
+    ultimo.innerText = "última etiqueta lida: " + codigo;
+
+    const r = await res.json();
 
     const somErro = document.getElementById('somErro');
-    somErro.currentTime = 0;
-    somErro.play();
+    const somOk = document.getElementById('somOk');
 
-    codigoInput.focus();
-    return;
-  }
+    if(r.valido){
+      msg.innerText = "✔ Código válido";
+      msg.style.color = "green";
 
-// try{
-  const res=await fetch('https://manhattan-backend-y7ul.onrender.com/validar',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      tipo: tipoSelecionado,
-      numero: numeroInput.value,
-      codigoBarras: codigo,
-      usuario: user.value
-    })
-  });
+      somOk.currentTime = 0;
+      somOk.play();
 
-  const ultimo = document.getElementById('ultimoCodigo');
-  ultimo.innerText = "última etiqueta lida: " + codigo;
+    } else {
+      msg.innerText = "❌ " + r.erro;
+      msg.style.color = "red";
 
-  const r = await res.json();
+      somErro.currentTime = 0;
+      somErro.play();
 
-  // const msg = document.getElementById('mensagem');
-  const somErro = document.getElementById('somErro');
-  const somOk = document.getElementById('somOk');
-
-  if(r.valido){
-    msg.innerText = "✔ Código válido";
-    msg.style.color = "green";
-
-    somOk.currentTime = 0;
-    somOk.play();
-
-  } else {
-    msg.innerText = "❌ " + r.erro;
-    msg.style.color = "red";
-
-    somErro.currentTime = 0;
-    somErro.play();
-
-    if (navigator.vibrate) {
-      navigator.vibrate([200, 100, 200]);
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200]);
+      }
     }
+
+    // 🔥 LIMPAR CAMPO
+    codigoInput.value = "";
+
+    // 🔥 FOCO AUTOMÁTICO
+    codigoInput.focus();
+
   }
 
-  // 🔥 LIMPAR CAMPO
-  codigoInput.value = "";
+  function camera(){
+    const qr=new Html5Qrcode('hist');
+    qr.start({facingMode:'environment'},{fps:10},txt=>{
+    qr.stop();
+    validar(txt);
+    });
+  }
 
-  // 🔥 FOCO AUTOMÁTICO
-  codigoInput.focus();
-
-}
-// }
-
-function camera(){
-  const qr=new Html5Qrcode('hist');
-  qr.start({facingMode:'environment'},{fps:10},txt=>{
-  qr.stop();
-  validar(txt);
+  ['di','df','status','fCod','fNum'].forEach(id=>{
+    document.addEventListener('input',e=>{if(e.target.id===id)filtrar();});
   });
-}
 
-['di','df','status','fCod','fNum'].forEach(id=>{
-  document.addEventListener('input',e=>{if(e.target.id===id)filtrar();});
-});
-
-window.onload=()=>{
-  usuario=localStorage.getItem('u');
-  mostrar();
-}
-
-codigoInput.addEventListener("keypress", function(e) {
-  if (e.key === "Enter") {
-    validarCodigo();
+  window.onload=()=>{
+    usuario=localStorage.getItem('u');
+    mostrar();
   }
-});
+
+  codigoInput.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      validarCodigo();
+    }
+  });
 
 </script>
 
