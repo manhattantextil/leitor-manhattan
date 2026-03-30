@@ -39,6 +39,33 @@ button{background:#007BFF;color:#fff;border:none}
   color: #fff;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 15px;
+  background: #fff;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+input {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  border-radius: 10px;
+}
+
 </style>
 </head>
 <body>
@@ -66,28 +93,12 @@ button{background:#007BFF;color:#fff;border:none}
 </div>
 
 <input id="numeroInput" placeholder="Pedido / OC">
-<input id="codigoInput" placeholder="Código de Barras">
+<input id="codigoInput" placeholder="Código de Barras" style="font-size:18px; font-weight:bold;">
 <div id="mensagem" style="margin-top:10px;font-weight:bold;"></div>
 
-<button onclick="validarCodigo()">Validar</button>
-<button onclick="camera()">Câmera</button>
-<!-- <button onclick="exportar()">Excel</button> -->
-<button onclick="logout()">Sair</button>
-
-<!-- <h3>Filtros</h3>
-<input type="date" id="di">
-<input type="date" id="df">
-<select id="status">
-<option value="">Todos</option>
-<option value="OK">OK</option>
-<option value="ERRO">ERRO</option>
-</select>
-<input id="fCod" placeholder="Código">
-<input id="fNum" placeholder="Pedido/OC">
-
-<div class="totais" id="totais"></div>
-<div class="history" id="hist"></div>
-</div> -->
+<button onclick="validarCodigo()">✅ Validar</button>
+<button onclick="camera()">📷 Câmera</button>
+<button onclick="logout()">🚪 Sair</button>
 
 <audio id="somOk">
   <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
@@ -162,7 +173,7 @@ function mostrar(){
   appDiv.style.display=usuario?'block':'none';
 
   if(usuario) 
-    userInfo.innerText='Usuário: '+usuario;
+    userInfo.innerText='Bem vindo, '+usuario;
 }
 
 async function validarCodigo(){
@@ -200,9 +211,9 @@ async function validarCodigo(){
     somErro.currentTime = 0;
     somErro.play();
 
-    // if (navigator.vibrate) {
-    //   navigator.vibrate([200, 100, 200]);
-    // }
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
+    }
   }
 
   // 🔥 LIMPAR CAMPO
@@ -212,47 +223,6 @@ async function validarCodigo(){
   codigoInput.focus();
 
 }
-// }
-
-// function add(codigo,status){
-//   const agora=new Date();
-//   dados.push({
-//     data:agora.toISOString().split('T')[0],
-//     hora:agora.toLocaleTimeString(),
-//     usuario,codigo,status,numero:numero.value
-//   });
-//   filtrar();
-// }
-
-// function filtrar(){
-// const lista=dados.filter(r=>{
-// return (!di.value||r.data>=di.value)
-// &&(!df.value||r.data<=df.value)
-// &&(!status.value||r.status===status.value)
-// &&(!fCod.value||r.codigo.includes(fCod.value))
-// &&(!fNum.value||r.numero.includes(fNum.value));
-// });
-// render(lista);
-// }
-
-// function render(lista){
-//   hist.innerHTML='';
-//   let ok=0,er=0;
-//   lista.slice().reverse().forEach(r=>{
-//   if(r.status==='OK') ok++; else er++;
-//   const d=document.createElement('div');
-//   d.innerText=`${r.data} ${r.hora} - ${r.usuario} - ${r.numero} - ${r.codigo} - ${r.status}`;
-//   hist.appendChild(d);
-// });
-
-// totais.innerText=`OK:${ok} ERRO:${er} TOTAL:${lista.length}`;
-// }
-
-// function exportar(){
-// const ws=XLSX.utils.json_to_sheet(dados);
-// const wb=XLSX.utils.book_new();
-// XLSX.utils.book_append_sheet(wb,ws,'Relatorio');
-// XLSX.writeFile(wb,'relatorio.xlsx');
 // }
 
 function camera(){
