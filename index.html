@@ -16,6 +16,29 @@ button{background:#007BFF;color:#fff;border:none}
 .history{max-height:150px;overflow:auto;margin-top:10px}
 .history div{border-bottom:1px solid #ddd;padding:4px}
 .totais{font-weight:bold;margin-top:10px}
+
+.tipoBtn {
+  flex: 1;
+  padding: 15px;
+  font-size: 16px;
+  border: 2px solid #007BFF;
+  background: #fff;
+  color: #007BFF;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tipoBtn.ativo {
+  background: #007BFF;
+  color: #fff;
+}
+
 </style>
 </head>
 <body>
@@ -33,11 +56,11 @@ button{background:#007BFF;color:#fff;border:none}
 <div id="tipoContainer" style="display:flex; gap:10px; margin-top:10px;">
   
   <button type="button" class="tipoBtn ativo" data-value="saida">
-    Pedido
+    📦 Saída
   </button>
 
   <button type="button" class="tipoBtn" data-value="entrada">
-    Ordem de Compra
+    🧾 Ordem de Compra
   </button>
 
 </div>
@@ -76,7 +99,18 @@ button{background:#007BFF;color:#fff;border:none}
 
 <script>
 
-const tipoSelecionado = document.querySelector('input[name="tipo"]:checked').value;
+let tipoSelecionado = "saida";
+
+document.querySelectorAll('.tipoBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    
+    document.querySelectorAll('.tipoBtn').forEach(b => b.classList.remove('ativo'));
+    
+    btn.classList.add('ativo');
+    
+    tipoSelecionado = btn.dataset.value;
+  });
+});
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
