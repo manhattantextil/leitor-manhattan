@@ -106,6 +106,7 @@ button:active{
 
 </div>
 
+<input id="filialInput" placeholder="Filial" inputmode="numeric" pattern="[0-9]*">
 <input id="numeroInput" placeholder="Pedido / OC" inputmode="numeric" pattern="[0-9]*">
 <input id="codigoInput" placeholder="Código de Barras" inputmode="numeric" maxlength="15" pattern="[0-9]*" style="font-size:18px; font-weight:bold;">
 <div id="mensagem" style="margin-top:10px;font-weight:bold;"></div>
@@ -215,9 +216,9 @@ button:active{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        tipo: tipoSelecionado,
-        numero: numeroInput.value,
-        codigoBarras: codigo,
+        codFil: filialInput.value,
+        numPed: numeroInput.value,
+        codBar: codigo,
         usuario: user.value
       })
     });
